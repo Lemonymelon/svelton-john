@@ -1,24 +1,19 @@
-// src/routes/api/ask.ts
 import type { RequestHandler } from '@sveltejs/kit';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { OPENAI_API_KEY } from '$env/static/private';
 
-if (!OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not defined');
-}
-
 const llm = new ChatOpenAI({
     model: "gpt-3.5-turbo",
     temperature: 0.7,
-    apiKey: OPENAI_API_KEY,
+    openAIApiKey: OPENAI_API_KEY,
 });
 
-const prompt = ChatPromptTemplate.fromMessages([
+const promptTemplate = ChatPromptTemplate.fromMessages([
     [
         "system",
-        "You are an assistant that responds with the most appropriate Elton John lyric.",
+        "You are a helpful assistant that only responds to questions with appropriate Elton John lyrics. The response should be a rational response to the question. Any lyric Elton John ever wrote is valid, do not just use famous examples. Do not return any of the following lyrics: {previous_lyrics}. The list is ordered by decreasing appropriateness for the user's question, so consider that when selecting a new lyric.",
     ],
     ["user", "{input}"],
 ]);
@@ -27,20 +22,19 @@ const outputParser = new StringOutputParser();
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { prompt: userPrompt } = await request.json();
+        const { prompt, responses } = await request.json();
+        const previousLyrics = responses.map((r: { text: string }) => r.text).join(" | ");
 
-        if (!userPrompt) {
-            return new Response(JSON.stringify({ error: 'Prompt is required' }), { status: 400 });
-        }
-
-        const chain = prompt.pipe(llm).pipe(outputParser);
+        const chain = promptTemplate.pipe(llm).pipe(outputParser);
 
         const response = await chain.invoke({
-            input: userPrompt,
+            previous_lyrics: previousLyrics || "none",
+            input: prompt,
         });
 
         return new Response(JSON.stringify({ response: response.trim() }), { status: 200 });
     } catch (err) {
+        console.error(err);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
     }
 };
