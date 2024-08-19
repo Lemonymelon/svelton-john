@@ -1,8 +1,7 @@
 <script lang="ts">
-    export let highlightClass: string = "";
-    export let classes: string = "";
+    export let extraClass: string = "";
 </script>
 
-<div class={`p-4 border rounded-lg ${highlightClass} ${classes}`}>
+<div class={`border p-4 rounded-lg shadow-md ${extraClass}`}>
     <slot></slot>
 </div>

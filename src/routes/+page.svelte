@@ -167,12 +167,7 @@
             {#if response}
                 <ResponseCard
                     responseText={response}
-                    isGoodDisabled={goodResponses.some(
-                        (r) => r.text === response,
-                    )}
-                    isBadDisabled={badResponses.some(
-                        (r) => r.text === response,
-                    )}
+                    isGood={null}
                     onGoodClick={() => rateResponse(true)}
                     onBadClick={() => rateResponse(false)}
                 />
@@ -205,15 +200,17 @@
                                 <button
                                     on:click={() => (showFullQuestion = false)}
                                     class="text-blue-500 hover:underline"
-                                    >See less</button
                                 >
+                                    Show less
+                                </button>
                             {:else}
-                                {lastQuestion.slice(0, characterLimit)}...
+                                {lastQuestion.slice(0, characterLimit) + "..."}
                                 <button
                                     on:click={() => (showFullQuestion = true)}
                                     class="text-blue-500 hover:underline"
-                                    >See more</button
                                 >
+                                    Show more
+                                </button>
                             {/if}
                         {:else}
                             {lastQuestion}
@@ -221,33 +218,38 @@
                     </p>
                 </div>
             {/if}
-            <div>
-                <p class="font-semibold mb-2">Good Responses:</p>
-                {#each goodResponses as { text }, index}
-                    <ResponseCard
-                        responseText={text}
-                        isGoodDisabled={true}
-                        isBadDisabled={badResponses.some(
-                            (r) => r.text === text,
-                        )}
-                        onGoodClick={() => moveResponseToGood(index)}
-                        onBadClick={() => moveResponseToBad(index)}
-                    />
-                {/each}
 
-                <p class="font-semibold mt-4 mb-2">Bad Responses:</p>
-                {#each badResponses as { text }, index}
-                    <ResponseCard
-                        responseText={text}
-                        isGoodDisabled={goodResponses.some(
-                            (r) => r.text === text,
-                        )}
-                        isBadDisabled={true}
-                        onGoodClick={() => moveResponseToGood(index)}
-                        onBadClick={() => moveResponseToBad(index)}
-                    />
-                {/each}
-            </div>
+            {#if goodResponses.length > 0}
+                <h2 class="text-lg font-semibold mb-2">Good Responses:</h2>
+                <ul class="list-disc pl-5">
+                    {#each goodResponses as { text }, index}
+                        <li class="mb-2">
+                            <ResponseCard
+                                responseText={text}
+                                isGood={true}
+                                onGoodClick={() => {}}
+                                onBadClick={() => moveResponseToBad(index)}
+                            />
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
+
+            {#if badResponses.length > 0}
+                <h2 class="text-lg font-semibold mb-2">Bad Responses:</h2>
+                <ul class="list-disc pl-5">
+                    {#each badResponses as { text }, index}
+                        <li class="mb-2">
+                            <ResponseCard
+                                responseText={text}
+                                isGood={false}
+                                onGoodClick={() => moveResponseToGood(index)}
+                                onBadClick={() => {}}
+                            />
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
         </div>
     </div>
 
