@@ -1,24 +1,27 @@
 <script lang="ts">
     import "../app.css";
+    import ResponseCard from "./components/ResponseCard.svelte";
 
     let prompt: string = "";
     let response: string = "";
     let error: string = "";
-    let responses: { text: string; rank: number }[] = [];
+    let goodResponses: { text: string }[] = [];
+    let badResponses: { text: string }[] = [];
     let lastQuestion: string = "";
     let isLoading: boolean = false;
     let sidebarOpen: boolean = false;
     let showFullQuestion: boolean = false;
-
     const characterLimit: number = 30;
     let currentImage: string = "/8bit-elton.jpeg";
     let typingInterval: number | undefined;
     let animationInterval: number | undefined;
+    let selectedResponse: string | null = null;
 
     async function askQuestion() {
         if (prompt !== lastQuestion) {
-            responses = [];
             lastQuestion = prompt;
+            goodResponses = [];
+            badResponses = [];
             showFullQuestion = false;
         }
 
@@ -28,7 +31,7 @@
             const res = await fetch("/api/ask", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt, responses }),
+                body: JSON.stringify({ prompt, goodResponses, badResponses }),
             });
 
             if (res.ok) {
@@ -36,7 +39,7 @@
                 const newResponse = data.response;
 
                 response = "";
-                responses = [{ text: newResponse, rank: 0 }, ...responses];
+                selectedResponse = null;
                 animateResponse(newResponse);
                 error = "";
             } else {
@@ -52,26 +55,52 @@
         }
     }
 
+    function rateResponse(isGood: boolean) {
+        if (isGood) {
+            if (!goodResponses.some((r) => r.text === response)) {
+                if (response) {
+                    badResponses = badResponses.filter(
+                        (r) => r.text !== response,
+                    );
+                    goodResponses = [{ text: response }, ...goodResponses];
+                }
+            }
+            selectedResponse = response;
+        } else {
+            if (!badResponses.some((r) => r.text === response)) {
+                if (response) {
+                    goodResponses = goodResponses.filter(
+                        (r) => r.text !== response,
+                    );
+                    badResponses = [{ text: response }, ...badResponses];
+                }
+            }
+            selectedResponse = response;
+        }
+    }
+
+    function moveResponseToGood(index: number) {
+        const movedResponse = badResponses[index];
+        if (movedResponse) {
+            if (!goodResponses.some((r) => r.text === movedResponse.text)) {
+                goodResponses = [movedResponse, ...goodResponses];
+                badResponses = badResponses.filter((_, i) => i !== index);
+            }
+        }
+    }
+
+    function moveResponseToBad(index: number) {
+        const movedResponse = goodResponses[index];
+        if (movedResponse) {
+            if (!badResponses.some((r) => r.text === movedResponse.text)) {
+                badResponses = [movedResponse, ...badResponses];
+                goodResponses = goodResponses.filter((_, i) => i !== index);
+            }
+        }
+    }
+
     function toggleSidebar() {
         sidebarOpen = !sidebarOpen;
-    }
-
-    function moveUp(index: number) {
-        if (index > 0) {
-            [responses[index - 1], responses[index]] = [
-                responses[index],
-                responses[index - 1],
-            ];
-        }
-    }
-
-    function moveDown(index: number) {
-        if (index < responses.length - 1) {
-            [responses[index + 1], responses[index]] = [
-                responses[index],
-                responses[index + 1],
-            ];
-        }
     }
 
     function animateResponse(newResponse: string) {
@@ -100,14 +129,6 @@
             Math.random() * (maxInterval - minInterval) + minInterval,
         );
     }
-
-    const mostRecentResponse = responses.length > 0 ? responses[0].text : "";
-    const highestRankedResponse =
-        responses.length > 0
-            ? responses.reduce((prev, curr) =>
-                  prev.rank > curr.rank ? prev : curr,
-              ).text
-            : "";
 </script>
 
 <main
@@ -137,29 +158,26 @@
             {/if}
         </button>
 
-        <div class="flex justify-center mt-4">
+        <div class="flex flex-col items-center mt-4">
             <img
                 src={currentImage}
                 alt="Elton John"
                 class="w-40 h-40 rounded-full border border-gray-300"
             />
+            {#if response}
+                <ResponseCard
+                    responseText={response}
+                    isGoodDisabled={goodResponses.some(
+                        (r) => r.text === response,
+                    )}
+                    isBadDisabled={badResponses.some(
+                        (r) => r.text === response,
+                    )}
+                    onGoodClick={() => rateResponse(true)}
+                    onBadClick={() => rateResponse(false)}
+                />
+            {/if}
         </div>
-
-        {#if response}
-            <div
-                class="relative bg-white p-4 border border-gray-300 rounded-lg shadow-md max-w-xs mt-4"
-            >
-                <p><strong>Response:</strong> {response}</p>
-            </div>
-        {/if}
-
-        {#if highestRankedResponse && highestRankedResponse !== response}
-            <div
-                class="relative bg-white p-4 border border-gray-300 rounded-lg shadow-md max-w-xs mt-4"
-            >
-                <p><strong>Most Popular:</strong> {highestRankedResponse}</p>
-            </div>
-        {/if}
 
         {#if error}
             <div
@@ -204,25 +222,30 @@
                 </div>
             {/if}
             <div>
-                {#each responses as { text }, index}
-                    <div
-                        class="bg-white p-4 border border-gray-300 rounded-lg shadow-md mb-2"
-                    >
-                        <p>{text}</p>
-                        <div class="flex justify-between mt-2">
-                            <button
-                                on:click={() => moveUp(index)}
-                                class="text-blue-500 hover:underline"
-                                disabled={index === 0}>▲</button
-                            >
-                            <button
-                                on:click={() => moveDown(index)}
-                                class="text-blue-500 hover:underline"
-                                disabled={index === responses.length - 1}
-                                >▼</button
-                            >
-                        </div>
-                    </div>
+                <p class="font-semibold mb-2">Good Responses:</p>
+                {#each goodResponses as { text }, index}
+                    <ResponseCard
+                        responseText={text}
+                        isGoodDisabled={true}
+                        isBadDisabled={badResponses.some(
+                            (r) => r.text === text,
+                        )}
+                        onGoodClick={() => moveResponseToGood(index)}
+                        onBadClick={() => moveResponseToBad(index)}
+                    />
+                {/each}
+
+                <p class="font-semibold mt-4 mb-2">Bad Responses:</p>
+                {#each badResponses as { text }, index}
+                    <ResponseCard
+                        responseText={text}
+                        isGoodDisabled={goodResponses.some(
+                            (r) => r.text === text,
+                        )}
+                        isBadDisabled={true}
+                        onGoodClick={() => moveResponseToGood(index)}
+                        onBadClick={() => moveResponseToBad(index)}
+                    />
                 {/each}
             </div>
         </div>
