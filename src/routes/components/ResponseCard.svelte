@@ -1,31 +1,40 @@
 <script lang="ts">
     import Card from "./Card.svelte";
+    import { Icon, Check, XMark } from "svelte-hero-icons";
 
     export let responseText: string;
     export let isGood: boolean | null = null;
     export let onGoodClick: () => void;
     export let onBadClick: () => void;
+    export let buttonsDisabled: boolean = false;
 
-    // Determine card background color
-    const backgroundColor =
-        isGood === true
-            ? "bg-green-100"
-            : isGood === false
-              ? "bg-red-100"
-              : "bg-white";
+    let backgroundColor = "bg-white";
+    let goodButtonClass = "";
+    let badButtonClass = "";
 
-    // Determine button colors
-    const defaultGoodButtonClass = "text-green-500 ring-green-500 bg-green-100";
-    const defaultBadButtonClass = "text-red-500 ring-red-500 bg-red-100";
-    const disabledButtonClass = "text-gray-500 ring-gray-300 bg-gray-100";
+    $: {
+        backgroundColor =
+            isGood === true
+                ? "bg-green-100"
+                : isGood === false
+                  ? "bg-red-100"
+                  : "bg-white";
 
-    const goodButtonClass =
-        isGood === true ? disabledButtonClass : defaultGoodButtonClass;
-    const badButtonClass =
-        isGood === false ? disabledButtonClass : defaultBadButtonClass;
+        const selectedGoodButtonClass = "text-green-500 bg-green-100";
+        const selectedBadButtonClass = "text-red-500 bg-red-100";
+        const unselectedGoodButtonClass =
+            "text-green-500 ring-green-500 ring-2";
+        const unselectedBadButtonClass = "text-red-500 ring-red-500 ring-2";
 
-    const buttonDisabledGood = isGood === true;
-    const buttonDisabledBad = isGood === false;
+        goodButtonClass =
+            isGood === true
+                ? selectedGoodButtonClass
+                : `bg-white ${unselectedGoodButtonClass}`;
+        badButtonClass =
+            isGood === false
+                ? selectedBadButtonClass
+                : `bg-white ${unselectedBadButtonClass}`;
+    }
 </script>
 
 <Card extraClass={backgroundColor}>
@@ -33,17 +42,17 @@
     <div class="flex justify-center mt-2 space-x-4">
         <button
             on:click={onBadClick}
-            class={`py-2 px-4 rounded-full ring-2 hover:bg-opacity-75 ${badButtonClass}`}
-            disabled={buttonDisabledBad}
+            class={`py-2 px-4 rounded-full hover:bg-opacity-75 ${badButtonClass}`}
+            disabled={buttonsDisabled}
         >
-            ✘
+            <Icon src={XMark} class={`w-6 h-6`} size="24" />
         </button>
         <button
             on:click={onGoodClick}
-            class={`py-2 px-4 rounded-full ring-2 hover:bg-opacity-75 ${goodButtonClass}`}
-            disabled={buttonDisabledGood}
+            class={`py-2 px-4 rounded-full hover:bg-opacity-75 ${goodButtonClass}`}
+            disabled={buttonsDisabled}
         >
-            ✔
+            <Icon src={Check} class={`w-6 h-6`} size="24" />
         </button>
     </div>
 </Card>

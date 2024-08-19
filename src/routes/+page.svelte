@@ -16,12 +16,15 @@
     let typingInterval: number | undefined;
     let animationInterval: number | undefined;
     let selectedResponse: string | null = null;
+    let isGood: boolean | null = null;
 
     async function askQuestion() {
         if (prompt !== lastQuestion) {
             lastQuestion = prompt;
             goodResponses = [];
             badResponses = [];
+            selectedResponse = null;
+            isGood = null;
             showFullQuestion = false;
         }
 
@@ -40,6 +43,7 @@
 
                 response = "";
                 selectedResponse = null;
+                isGood = null;
                 animateResponse(newResponse);
                 error = "";
             } else {
@@ -51,24 +55,20 @@
             response = "";
             error = "An error occurred";
         } finally {
-            isLoading = false;
         }
     }
 
-    function rateResponse(isGood: boolean) {
-        if (isGood) {
-            if (!goodResponses.some((r) => r.text === response)) {
-                if (response) {
+    function rateResponse(isGoodResponse: boolean) {
+        if (response) {
+            if (isGoodResponse) {
+                if (!goodResponses.some((r) => r.text === response)) {
                     badResponses = badResponses.filter(
                         (r) => r.text !== response,
                     );
                     goodResponses = [{ text: response }, ...goodResponses];
                 }
-            }
-            selectedResponse = response;
-        } else {
-            if (!badResponses.some((r) => r.text === response)) {
-                if (response) {
+            } else {
+                if (!badResponses.some((r) => r.text === response)) {
                     goodResponses = goodResponses.filter(
                         (r) => r.text !== response,
                     );
@@ -76,6 +76,7 @@
                 }
             }
             selectedResponse = response;
+            isGood = isGoodResponse;
         }
     }
 
@@ -116,6 +117,7 @@
                 clearInterval(typingInterval);
                 clearInterval(animationInterval);
                 currentImage = "/8bit-elton.jpeg";
+                isLoading = false;
             }
         }, 50);
 
@@ -167,7 +169,8 @@
             {#if response}
                 <ResponseCard
                     responseText={response}
-                    isGood={null}
+                    {isGood}
+                    buttonsDisabled={isLoading}
                     onGoodClick={() => rateResponse(true)}
                     onBadClick={() => rateResponse(false)}
                 />
@@ -221,12 +224,13 @@
 
             {#if goodResponses.length > 0}
                 <h2 class="text-lg font-semibold mb-2">Good Responses:</h2>
-                <ul class="list-disc pl-5">
+                <ul class="pl-5">
                     {#each goodResponses as { text }, index}
                         <li class="mb-2">
                             <ResponseCard
                                 responseText={text}
                                 isGood={true}
+                                buttonsDisabled={false}
                                 onGoodClick={() => {}}
                                 onBadClick={() => moveResponseToBad(index)}
                             />
@@ -237,12 +241,13 @@
 
             {#if badResponses.length > 0}
                 <h2 class="text-lg font-semibold mb-2">Bad Responses:</h2>
-                <ul class="list-disc pl-5">
+                <ul class="pl-5">
                     {#each badResponses as { text }, index}
                         <li class="mb-2">
                             <ResponseCard
                                 responseText={text}
                                 isGood={false}
+                                buttonsDisabled={false}
                                 onGoodClick={() => moveResponseToGood(index)}
                                 onBadClick={() => {}}
                             />

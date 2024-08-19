@@ -32,7 +32,8 @@
 	"dependencies": {
 		"@langchain/core": "^0.2.0",
 		"@langchain/openai": "^0.2.0",
-		"openai": "^4.55.7"
+		"openai": "^4.55.7",
+		"svelte-hero-icons": "^5.2.0"
 	},
 	"type": "module"
 }
