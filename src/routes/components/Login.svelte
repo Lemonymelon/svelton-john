@@ -4,6 +4,8 @@
     export let layoutVariant: "row" | "column" = "column";
     export let additionalClasses = "";
 
+    console.log(layoutVariant);
+
     let email = "";
     let password = "";
     let errorMessage = "";
@@ -34,9 +36,9 @@
 </script>
 
 <div
-    class={`flex ${layoutVariant === "row" ? "flex-row gap-6" : "flex-col gap-4"} ${additionalClasses} border p-4 rounded-lg shadow-md bg-white`}
+    class={`flex ${layoutVariant === "row" ? "flex-row w-full gap-6" : "flex-col gap-4"} ${additionalClasses} border p-4 rounded-lg shadow-md bg-white`}
 >
-    <h2 class="text-xl font-bold mb-4">
+    <h2 class="text-xl font-bold mb-4 flex-shrink-0">
         {isLogin ? "Log In" : "Sign Up"}
     </h2>
 
@@ -44,34 +46,36 @@
         type="email"
         placeholder="Email"
         bind:value={email}
-        class="border p-2 mb-4 rounded w-full"
+        class="border p-2 rounded flex-grow"
     />
     <input
         type="password"
         placeholder="Password"
         bind:value={password}
-        class="border p-2 mb-4 rounded w-full"
+        class="border p-2 rounded flex-grow"
     />
 
     {#if errorMessage}
-        <div class="text-red-500 mb-4">
+        <div class="text-red-500 mb-4 w-full">
             {errorMessage}
         </div>
     {/if}
 
-    <button
-        on:click={handleSubmit}
-        class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full"
-    >
-        {isLogin ? "Log In" : "Sign Up"}
-    </button>
+    <div class="flex gap-4 w-full">
+        <button
+            on:click={handleSubmit}
+            class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 flex-grow"
+        >
+            {isLogin ? "Log In" : "Sign Up"}
+        </button>
 
-    <button
-        on:click={toggleMode}
-        class="mt-4 text-blue-500 hover:underline w-full"
-    >
-        {isLogin
-            ? "Need an account? Sign Up"
-            : "Already have an account? Log In"}
-    </button>
+        <button
+            on:click={toggleMode}
+            class="text-blue-500 hover:underline flex-grow"
+        >
+            {isLogin
+                ? "Need an account? Sign Up"
+                : "Already have an account? Log In"}
+        </button>
+    </div>
 </div>

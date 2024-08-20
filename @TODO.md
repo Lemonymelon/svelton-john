@@ -10,6 +10,9 @@
 - [ ] **Styling Import**
   - Determine a single point of import for styling.
 
+- [ ] **Mobile View**
+  - Alter sidebar and nav behaviour on mobile view.
+
 ## 19/08/2024
 - [ ] **Sync Up Responses**
   - Ensure the most recent response is completely synced with the same response in the sidebar (tick/cross).

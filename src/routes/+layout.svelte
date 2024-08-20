@@ -3,9 +3,7 @@
     import "../app.css";
 </script>
 
-<main>
+<main class="flex flex-col">
     <NavBar />
-    <div class="pt-32">
-        <slot />
-    </div>
+    <slot />
 </main>
