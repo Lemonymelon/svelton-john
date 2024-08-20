@@ -137,6 +137,7 @@
     class="flex flex-col items-center justify-center p-4 bg-gray-100 min-h-screen relative"
 >
     <div class="w-full max-w-md">
+        <!-- Inner container without relative positioning -->
         <textarea
             bind:value={prompt}
             placeholder="Type your question here..."
@@ -187,12 +188,18 @@
         {/if}
     </div>
 
+    <!-- Moved the button outside the inner container -->
+    <button
+        on:click={toggleSidebar}
+        class="absolute top-4 right-4 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 z-10"
+    >
+        ☰
+    </button>
+
     <div
-        class={`fixed top-0 right-0 w-80 h-full bg-gray-200 border-l border-gray-300 overflow-y-auto transition-transform ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+        class={`absolute top-0 right-0 w-80 h-full bg-gray-200 border-l border-gray-300 overflow-y-auto transition-transform ${sidebarOpen ? "translate-x-0" : "translate-x-full"} z-0`}
     >
         <div class="p-4">
-            <button on:click={toggleSidebar} class="text-xl font-bold">×</button
-            >
             {#if lastQuestion}
                 <div class="mb-4">
                     <p class="font-semibold mb-2">Current Question:</p>
@@ -257,11 +264,4 @@
             {/if}
         </div>
     </div>
-
-    <button
-        on:click={toggleSidebar}
-        class="fixed top-4 right-4 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
-    >
-        ☰
-    </button>
 </main>
