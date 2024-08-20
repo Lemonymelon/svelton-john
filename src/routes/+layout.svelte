@@ -5,5 +5,7 @@
 
 <main>
     <NavBar />
-    <slot />
+    <div class="pt-32">
+        <slot />
+    </div>
 </main>

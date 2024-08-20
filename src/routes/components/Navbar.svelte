@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
     import Login from "./Login.svelte";
     import { user } from "../../lib/authStore";
     import { logOut } from "../../lib/auth";
@@ -34,11 +34,7 @@
                 Log Out
             </button>
         {:else}
-            <Login />
+            <Login layoutVariant="row" />
         {/if}
     </div>
 </nav>
-
-<div class="pt-12">
-    <slot />
-</div>

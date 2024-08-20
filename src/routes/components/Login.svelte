@@ -1,6 +1,9 @@
 <script lang="ts">
     import { signUp, logIn } from "../../lib/auth";
+
+    export let layoutVariant: "row" | "column" = "column";
     export let additionalClasses = "";
+
     let email = "";
     let password = "";
     let errorMessage = "";
@@ -31,44 +34,44 @@
 </script>
 
 <div
-    class={`flex flex-col items-center space-y-4 bg-white p-4 rounded-md shadow-md ${additionalClasses}`}
+    class={`flex ${layoutVariant === "row" ? "flex-row gap-6" : "flex-col gap-4"} ${additionalClasses} border p-4 rounded-lg shadow-md bg-white`}
 >
-    <h2 class="text-xl font-semibold mb-4 text-center">
+    <h2 class="text-xl font-bold mb-4">
         {isLogin ? "Log In" : "Sign Up"}
     </h2>
-    <form
-        on:submit|preventDefault={handleSubmit}
-        class="flex flex-col space-y-2 w-full"
+
+    <input
+        type="email"
+        placeholder="Email"
+        bind:value={email}
+        class="border p-2 mb-4 rounded w-full"
+    />
+    <input
+        type="password"
+        placeholder="Password"
+        bind:value={password}
+        class="border p-2 mb-4 rounded w-full"
+    />
+
+    {#if errorMessage}
+        <div class="text-red-500 mb-4">
+            {errorMessage}
+        </div>
+    {/if}
+
+    <button
+        on:click={handleSubmit}
+        class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full"
     >
-        <input
-            type="email"
-            bind:value={email}
-            placeholder="Email"
-            class="p-2 border border-gray-300 rounded-md text-sm w-full"
-        />
-        <input
-            type="password"
-            bind:value={password}
-            placeholder="Password"
-            class="p-2 border border-gray-300 rounded-md text-sm w-full"
-        />
-        <button
-            type="submit"
-            class="py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm w-full"
-        >
-            {isLogin ? "Log In" : "Sign Up"}
-        </button>
-        {#if errorMessage}
-            <p class="text-red-500 text-sm text-center">{errorMessage}</p>
-        {/if}
-        <button
-            type="button"
-            on:click={toggleMode}
-            class="text-blue-500 text-sm hover:underline w-full text-center"
-        >
-            {isLogin
-                ? "Need an account? Sign Up"
-                : "Already have an account? Log In"}
-        </button>
-    </form>
+        {isLogin ? "Log In" : "Sign Up"}
+    </button>
+
+    <button
+        on:click={toggleMode}
+        class="mt-4 text-blue-500 hover:underline w-full"
+    >
+        {isLogin
+            ? "Need an account? Sign Up"
+            : "Already have an account? Log In"}
+    </button>
 </div>
