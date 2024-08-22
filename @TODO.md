@@ -1,5 +1,12 @@
 # TO DO
 
+## 21/08/2024
+- [ ] **Employ $lib alias**
+  - Make imports more dynamic.
+
+- [ ] **Make responses more uniform**
+  - Consistent removal of whitespace, punctuation.
+
 ## 20/08/2024
 - [ ] **Hide Navbar Login**
   - Hide the login option in the navbar when on the login page.
