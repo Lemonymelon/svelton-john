@@ -10,28 +10,24 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "eslint .",
 		"tree": "sh -c 'find . \\( -name \"node_modules\" -o -name \"dist\" -o -name \".git\" \\) -prune -o -type f -print > temp.txt && clip < temp.txt && rm temp.txt'",
-		"knex": "cross-env NODE_OPTIONS=\"--require ts-node/register\" knex",
-		"migrate:latest": "npm run knex -- migrate:latest",
-		"migrate:rollback": "npm run knex -- migrate:rollback",
-		"migrate:make": "npm run knex -- migrate:make",
-		"migrate:up": "npm run knex -- migrate:up",
-		"migrate:down": "npm run knex -- migrate:down",
-		"migrate:status": "npm run knex -- migrate:status",
-		"migrate:reset": "npm run knex -- migrate:rollback --all && npm run knex -- migrate:latest",
-		"migrate:version": "npm run knex -- migrate:version",
-		"seed:run": "npm run knex -- seed:run",
-		"seed:make": "npm run seed:make"
+		"migrate:make": "npx ts-node src/db/knex-commands.ts migrate:make",
+		"migrate:latest": "npx ts-node src/db/knex-commands.ts migrate:latest",
+		"migrate:rollback": "npx ts-node src/db/knex-commands.ts migrate:rollback"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.2.4",
 		"@sveltejs/kit": "^2.5.22",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^9.6.0",
+		"@types/knex": "^0.16.1",
 		"@types/node": "^22.5.0",
+		"@types/pg": "^8.11.6",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.0.0",
 		"eslint-plugin-svelte": "^2.36.0",
+		"esm": "^3.2.25",
 		"globals": "^15.0.0",
+		"knex": "^3.1.0",
 		"postcss": "^8.4.41",
 		"svelte": "^4.2.18",
 		"svelte-check": "^3.6.0",
@@ -45,10 +41,9 @@
 		"@langchain/core": "^0.2.0",
 		"@langchain/openai": "^0.2.0",
 		"@supabase/supabase-js": "^2.45.1",
-		"knex": "^3.1.0",
+		"dotenv": "^16.4.5",
 		"openai": "^4.55.7",
 		"pg": "^8.12.0",
 		"svelte-hero-icons": "^5.2.0"
-	},
-	"type": "module"
+	}
 }

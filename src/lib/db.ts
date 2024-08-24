@@ -1,6 +1,6 @@
 import type { Knex } from 'knex';
 import knex from 'knex';
-import config from '../../knexfile';
+import config from '../db/knexfile.js';
 
 type Environment = 'development' | 'production';
 
