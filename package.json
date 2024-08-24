@@ -10,9 +10,9 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "eslint .",
 		"tree": "sh -c 'find . \\( -name \"node_modules\" -o -name \"dist\" -o -name \".git\" \\) -prune -o -type f -print > temp.txt && clip < temp.txt && rm temp.txt'",
-		"migrate:make": "npx ts-node src/db/knex-commands.ts migrate:make",
-		"migrate:latest": "npx ts-node src/db/knex-commands.ts migrate:latest",
-		"migrate:rollback": "npx ts-node src/db/knex-commands.ts migrate:rollback"
+		"migrate:make": "ts-node ./scripts/migration.ts make",
+		"migrate:latest": "ts-node ./scripts/migration.ts latest",
+		"migrate:rollback": "ts-node ./scripts/migration.ts rollback"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.2.4",
