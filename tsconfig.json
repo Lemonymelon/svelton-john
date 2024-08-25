@@ -7,21 +7,9 @@
 		"rootDir": "./src",
 		"strict": true,
 		"esModuleInterop": true,
-		"baseUrl": ".",
-		"paths": {
-			"$env/static/private": [
-				"node_modules/@sveltejs/kit/types/env/static/private"
-			],
-			"$env/static/public": [
-				"node_modules/@sveltejs/kit/types/env/static/public"
-			],
-			"$env/dynamic/private": [
-				"node_modules/@sveltejs/kit/types/env/dynamic/private"
-			],
-			"$env/dynamic/public": [
-				"node_modules/@sveltejs/kit/types/env/dynamic/public"
-			]
-		}
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"skipLibCheck": true
 	},
 	"include": [
 		"src/**/*.ts",
@@ -30,5 +18,5 @@
 	],
 	"exclude": [
 		"node_modules"
-	],
+	]
 }
