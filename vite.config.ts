@@ -1,6 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import postcss from './postcss.config.js'; // Import your PostCSS config
+import postcss from './postcss.config.js';
 
 export default defineConfig({
 	plugins: [sveltekit()],
@@ -8,6 +8,12 @@ export default defineConfig({
 		postcss,
 	},
 	ssr: {
-		noExternal: ["svelte-hero-icons"],
+		noExternal: ['svelte-hero-icons'],
+	},
+	resolve: {
+		alias: {
+			$components: '/src/components',
+			$lib: '/src/lib',
+		}
 	}
 });

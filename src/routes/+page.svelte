@@ -15,7 +15,6 @@
     let currentImage: string = "/8bit-elton.jpeg";
     let typingInterval: number | undefined;
     let animationInterval: number | undefined;
-    let selectedResponse: string | null = null;
     let isGood: boolean | null = null;
 
     async function askQuestion() {
@@ -23,7 +22,6 @@
             lastQuestion = prompt;
             goodResponses = [];
             badResponses = [];
-            selectedResponse = null;
             isGood = null;
             showFullQuestion = false;
         }
@@ -42,7 +40,6 @@
                 const newResponse = data.response;
 
                 response = "";
-                selectedResponse = null;
                 isGood = null;
                 animateResponse(newResponse);
                 error = "";
@@ -75,7 +72,6 @@
                     badResponses = [{ text: response }, ...badResponses];
                 }
             }
-            selectedResponse = response;
             isGood = isGoodResponse;
         }
     }
@@ -137,7 +133,6 @@
     class="flex flex-col items-center justify-center p-4 bg-gray-100 min-h-screen relative"
 >
     <div class="w-full max-w-md">
-        <!-- Inner container without relative positioning -->
         <textarea
             bind:value={prompt}
             placeholder="Type your question here..."
@@ -188,7 +183,6 @@
         {/if}
     </div>
 
-    <!-- Moved the button outside the inner container -->
     <button
         on:click={toggleSidebar}
         class="absolute top-4 right-4 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 z-10"

@@ -4,8 +4,6 @@
     export let layoutVariant: "row" | "column" = "column";
     export let additionalClasses = "";
 
-    console.log(layoutVariant);
-
     let email = "";
     let password = "";
     let errorMessage = "";
