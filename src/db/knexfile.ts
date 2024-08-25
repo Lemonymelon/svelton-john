@@ -1,17 +1,16 @@
 import type { Knex } from 'knex';
-import dotenv from 'dotenv';
+import { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, } from '$env/static/private';
 
-dotenv.config();
 
 const config: { [key: string]: Knex.Config } = {
     development: {
         client: 'pg',
         connection: {
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-            port: Number(process.env.DB_PORT),
+            host: DB_HOST,
+            user: DB_USER,
+            password: DB_PASSWORD,
+            database: DB_NAME,
+            // port: Number(DB_PORT),
         },
         migrations: {
             directory: './migrations',
@@ -22,18 +21,18 @@ const config: { [key: string]: Knex.Config } = {
             extension: 'ts',
         },
     },
-    production: {
-        client: 'pg',
-        connection: process.env.DATABASE_URL,
-        migrations: {
-            directory: './dist/db/migrations', // For compiled output
-            extension: 'ts',
-        },
-        seeds: {
-            directory: './dist/db/seeds', // For compiled output
-            extension: 'ts',
-        },
-    },
+    // production: {
+    //     client: 'pg',
+    //     connection: DATABASE_URL,
+    //     migrations: {
+    //         directory: './dist/db/migrations',
+    //         extension: 'ts',
+    //     },
+    //     seeds: {
+    //         directory: './dist/db/seeds',
+    //         extension: 'ts',
+    //     },
+    // },
 };
 
 export default config;
